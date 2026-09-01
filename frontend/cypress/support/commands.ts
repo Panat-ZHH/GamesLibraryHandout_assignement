@@ -65,6 +65,18 @@ Cypress.Commands.add('deleteGameByTitle', (title: string) => {
   });
 });
 
+/**
+ * Führt eine Suche aus, die sicher keine Treffer liefert, und wartet
+ * auf den leeren Ergebniszustand der Liste.
+ */
+Cypress.Commands.add('searchUntilNoGamesFound', (term = `KeinTreffer${Date.now()}`) => {
+  cy.intercept('GET', '/api/games/search*').as('searchNoResults');
+  cy.get('.search-bar__input').clear().type(term);
+  cy.get('.search-bar__button').click();
+  cy.wait('@searchNoResults');
+  cy.get('.game-list__status-title').should('contain.text', 'No Games Found');
+});
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -78,6 +90,7 @@ declare global {
         releaseDate?: string;
       }): Chainable<void>;
       deleteGameByTitle(title: string): Chainable<void>;
+      searchUntilNoGamesFound(term?: string): Chainable<void>;
     }
   }
 }

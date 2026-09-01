@@ -55,8 +55,10 @@ export const useGames = () => {
     try {
       const created = await api.createGame(game);
       setGames((prev) => [...prev, created]);
+      return true;
     } catch {
       setError('Fehler beim Erstellen des Spiels.');
+      return false;
     }
   }, []);
 
@@ -65,8 +67,10 @@ export const useGames = () => {
     try {
       const updated = await api.updateGame(id, game);
       setGames((prev) => prev.map((g) => (g.id === id ? updated : g)));
+      return true;
     } catch {
       setError('Fehler beim Aktualisieren des Spiels.');
+      return false;
     }
   }, []);
 

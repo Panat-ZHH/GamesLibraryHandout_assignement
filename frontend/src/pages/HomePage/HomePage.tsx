@@ -52,11 +52,12 @@ const HomePage: React.FC = () => {
   };
 
   const handleFormSubmit = async (game: Game) => {
-    if (selectedGame?.id) {
-      await editGame(selectedGame.id, game);
-    } else {
-      await addGame(game);
-    }
+    const saved = selectedGame?.id
+      ? await editGame(selectedGame.id, game)
+      : await addGame(game);
+
+    if (!saved) return;
+
     setShowForm(false);
     setSelectedGame(null);
   };

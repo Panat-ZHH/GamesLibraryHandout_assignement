@@ -4,7 +4,7 @@
  * Zeigt ein einzelnes Spiel als Karte an.
  * Bietet Schaltflächen zum Bearbeiten und Löschen.
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Game } from '../../types/Game';
 import './GameCard.css';
 
@@ -15,7 +15,12 @@ interface Props {
 }
 
 const GameCard: React.FC<Props> = ({ game, onEdit, onDelete }) => {
-  const hasImage = !!game.imageUrl;
+  const [imageFailed, setImageFailed] = useState(false);
+  const hasImage = !!game.imageUrl && !imageFailed;
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [game.imageUrl]);
 
   return (
     <div className="game-card">
@@ -27,17 +32,7 @@ const GameCard: React.FC<Props> = ({ game, onEdit, onDelete }) => {
               src={game.imageUrl}
               alt={game.title}
               className="game-card__image"
-              onError={(e) => {
-                const wrapper = (e.target as HTMLImageElement).parentElement!;
-                (e.target as HTMLImageElement).remove();
-                wrapper.innerHTML = `
-                  <div class="game-card__no-image">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/>
-                    </svg>
-                    <span>No Image</span>
-                  </div>`;
-              }}
+              onError={() => setImageFailed(true)}
             />
             <div className="game-card__image-overlay" />
           </>

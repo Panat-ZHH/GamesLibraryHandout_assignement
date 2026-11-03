@@ -10,9 +10,9 @@ spring:
               uri: lb://games-service
               predicates:
                 - Path=/api/games/**
-            # Steam-Suche steckt noch im Backend, ab 03.11. -> lb://steam-service
+            # seit 4.1 eigener Service (Strangler-Schritt)
             - id: steam
-              uri: lb://games-service
+              uri: lb://steam-service
               predicates:
                 - Path=/api/steam/**
           default-filters:

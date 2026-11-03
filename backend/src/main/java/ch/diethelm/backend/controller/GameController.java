@@ -2,6 +2,7 @@ package ch.diethelm.backend.controller;
 
 import ch.diethelm.backend.model.Game;
 import ch.diethelm.backend.service.GameService;
+import ch.diethelm.backend.steam.SteamImportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.List;
  *   <li>{@code GET    /api/games/{id}}       – einzelnes Spiel per ID abrufen</li>
  *   <li>{@code GET    /api/games/search}     – Spiele nach Titel suchen</li>
  *   <li>{@code POST   /api/games}           – neues Spiel anlegen</li>
+ *   <li>{@code POST   /api/games/import/{steamAppId}} – Spiel aus dem steam-service importieren</li>
  *   <li>{@code PUT    /api/games/{id}}       – bestehendes Spiel aktualisieren</li>
  *   <li>{@code DELETE /api/games/{id}}       – Spiel löschen</li>
  * </ul>
@@ -36,6 +38,7 @@ import java.util.List;
 public class GameController {
 
     private final GameService gameService;
+    private final SteamImportService steamImportService;
 
     // GET /api/games
     @GetMapping
@@ -60,6 +63,13 @@ public class GameController {
     public ResponseEntity<Game> createGame(@Valid @RequestBody Game game) {
         Game created = gameService.createGame(game);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    // POST /api/games/import/{steamAppId}
+    @PostMapping("/import/{steamAppId}")
+    public ResponseEntity<Game> importFromSteam(@PathVariable long steamAppId) {
+        Game imported = steamImportService.importGame(steamAppId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(imported);
     }
 
     // PUT /api/games/{id}

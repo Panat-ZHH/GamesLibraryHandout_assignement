@@ -35,6 +35,11 @@ spring:
 server:
   port: 8081
 
+# Servicename aus Eureka, ohne Port (siehe SteamClientConfig)
+gameslibrary:
+  steam:
+    base-url: http://steam-service
+
 eureka:
   instance:
     hostname: localhost

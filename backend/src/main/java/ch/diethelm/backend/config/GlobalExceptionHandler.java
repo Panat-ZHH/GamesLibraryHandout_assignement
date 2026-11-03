@@ -1,5 +1,6 @@
 package ch.diethelm.backend.config;
 
+import ch.diethelm.backend.steam.SteamImportException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ import java.util.NoSuchElementException;
  *   <li>{@link jakarta.validation.ConstraintViolationException}
  *                                                       → HTTP 400 Bad Request
  *       (ausgelöst durch Constraint-Annotationen auf Service-Ebene)</li>
+ *   <li>{@link ch.diethelm.backend.steam.SteamImportException}
+ *                                                       → Status aus der Exception
+ *       (404, 502 oder 503 beim Import aus dem steam-service)</li>
  *   <li>{@link Exception} (alle anderen)                → HTTP 500 Internal Server Error</li>
  * </ul>
  *
@@ -63,6 +67,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> handleConstraint(ConstraintViolationException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    // 404 / 502 / 503 – Import aus dem steam-service
+    // eigener Handler, sonst macht handleGeneral daraus einen 500
+    @ExceptionHandler(SteamImportException.class)
+    public ResponseEntity<Map<String, Object>> handleSteam(SteamImportException ex) {
+        return ResponseEntity.status(ex.getStatus())
+                .body(Map.of("status", ex.getStatus().value(),
+                        "error", ex.getMessage()));
     }
 
     // 500 – Allgemeiner Fehler

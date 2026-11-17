@@ -1,3 +1,5 @@
+[![CI](https://github.com/Panat-ZHH/GamesLibraryHandout_assignement/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Panat-ZHH/GamesLibraryHandout_assignement/actions/workflows/ci.yml)
+
 # Auftrag: Testing der GamesLibrary-Applikation
 
 ## Ausgangslage

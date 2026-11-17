@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, gateway, steam-service]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Tests von ${{ matrix.service }}
+        working-directory: ${{ matrix.service }}
+        run: ./mvnw -B test
+        env:
+          SPRING_PROFILES_ACTIVE: h2
+      - name: Testbericht von ${{ matrix.service }} sichern
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-${{ matrix.service }}
+          path: ${{ matrix.service }}/target/surefire-reports
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy"

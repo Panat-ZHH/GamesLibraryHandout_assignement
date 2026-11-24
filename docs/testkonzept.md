@@ -84,6 +84,23 @@ Die Pipeline `.github/workflows/ci.yml` läuft bei jedem Push und Pull Request:
 
 Arbeitsweise: Änderungen entstehen auf einem Feature-Branch und kommen per Pull Request auf `main`. Gemergt wird nur, wenn die Pipeline im Pull Request grün ist.
 
+### 4.3 Abdeckung (JaCoCo, Stand 24.11.2026)
+
+Gemessen mit `./mvnw verify` im `backend` (identisch mit dem Artefakt `jacoco-backend` der Pipeline):
+
+| Klasse | Instructions | Branches | Zeilen (missed/total) |
+|---|---|---|---|
+| `GameService` | 100 % | 100 % | 0/15 |
+| `GameController` | 22 % | – | 8/10 |
+| `TitleNormalizer` | 89 % | 100 % | 1/5 |
+| `GlobalExceptionHandler` | 36 % | – | 14/22 |
+| `SteamImportService` | 6 % | 0 % | 17/18 |
+| **Total** | **49 %** (241/487) | **43 %** (6/14) | 52/101 |
+
+Rot sind vor allem `SteamImportService`, `GameController` (POST, PUT, DELETE und Import sind noch ungetestet) und die Fehlerpfade im `GlobalExceptionHandler`. `GameBadges` ist hier noch nicht enthalten, weil die Messung vor dieser Klasse lief.
+
+Einen Schwellwert von 80 % fordern wir vorerst nicht: Bei 49 % wäre die Pipeline sofort rot, und eine hohe Zahl sagt nur, wie viel Code lief, nicht, ob die Tests etwas prüfen. Sinnvoller ist ein Ziel pro Risiko (zuerst Controller und Steam-Import), danach ein Schwellwert knapp unter dem erreichten Stand, damit die Abdeckung nicht sinkt.
+
 ## 5. Testfallerstellung
 
 *Wird bis zur Schlussabgabe ergänzt* (Äquivalenzklassen, Grenzwerte). Bereits angewendet: Für `TitleNormalizer` sind die ungültigen Eingaben `null`, `""` und `"   "` eine Äquivalenzklasse und werden mit einem parametrisierten Test geprüft.
